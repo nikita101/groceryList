@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react'
 import groceryItems from '../Data/groceryItems.json'
+import StoreInventoryList from './StoreInventoryList'
 
 const CheckoutCart = () =>{
 const [cartItems, setCartItems] = useState('');
@@ -70,13 +71,16 @@ const [net, setNet] = useState(0);
 
     return (
         <div>
+            <StoreInventoryList/>
+
             <form onSubmit={handleSubmit}>
-                <p>Please enter all the items purchased seperated by a comma. </p>
+                <p>Please enter all the items you'd like to purchase seperated by a comma. </p>
                 <input className="checkoutInput" type="text" onChange={handleChange}/>
                 <button type="submit" className="myButton"> Checkout </button>
             </form>
+
             <div>
-                <h4>Your Total: ${net}</h4>
+                <h4>Your Total: ${net.toFixed(2)}</h4>
                 <h4>Your Savings: ${(gross - net).toFixed(2)}</h4>
             </div>
         </div>
