@@ -5,14 +5,15 @@ const CheckoutCart = () =>{
 const [cartItems, setCartItems] = useState('');
 const [cartItemsAndQuantity, setCartItemsAndQuantity] = useState('');
 const [compiledCart, setCompiledCart] = useState('');
-const duplicateCounts = {};
+const [gross, setGross] = useState(0);
+const [net, setNet] = useState(0);
 
     useEffect(() => {
         return cartItemsAndQuantity != '' ? compileCart() : null
     },[cartItemsAndQuantity]);
 
     useEffect(() => {
-        return compiledCart != '' ? calculateGrossTotal() : null
+        return compiledCart != '' ? calculateTotal() : null
     },[compiledCart]);
 
     const handleChange = (e) =>{
@@ -36,29 +37,24 @@ const duplicateCounts = {};
         setCompiledCart(grossCartAccumulator)
       }
 
-    const calculateGrossTotal = () =>{
-    //     const grossTotal = compiledCart.reduce( ( sum, { price, quantity } ) => sum + (price * quantity) , 0)
-    //     console.log(grossTotal)
-    //     console.log(compiledCart)
-    //     compiledCart.reduce( ( sum, { price, quantity, item } ) => sum + (
-    //         console.log(item, quantity % 2)
-    //         ) , 0)
-    const gross = compiledCart.reduce((sum, {item, price, quantity, salesPrice = 0}) => {
-        let total = 0;
-        if (quantity >= 2 && item === "milk") {
-            const saleQuantity = 2 * Math.floor(quantity / 2);
-            console.log({sum, item, saleQuantity, remainderQuantity: quantity - saleQuantity});
-            total = ((saleQuantity / 2) * salesPrice) + (price * (quantity - saleQuantity));
-        } else if (quantity >= 3 && item === "bread") {
-            const saleQuantity = 3 * Math.floor(quantity / 3);
-            console.log({sum, item, saleQuantity, remainderQuantity: quantity - saleQuantity});
-            total = ((saleQuantity / 3) * salesPrice) + (price * (quantity - saleQuantity));
-        } else {
-            total = (price * quantity);
-        }
-        return + sum + total;
-    }, 0);
-    console.log('gross', gross)
+    const calculateTotal = () =>{
+        const grossTotal = compiledCart.reduce( ( sum, { price, quantity } ) => sum + (price * quantity) , 0)
+            setGross(grossTotal)
+
+        const net = compiledCart.reduce((sum, {item, price, quantity, salesPrice = 0}) => {
+            let total = 0
+            if (quantity >= 2 && item === "milk") {
+                const saleQuantity = 2 * Math.floor(quantity / 2)
+                total = ((saleQuantity / 2) * salesPrice) + (price * (quantity - saleQuantity))
+            } else if (quantity >= 3 && item === "bread") {
+                const saleQuantity = 3 * Math.floor(quantity / 3)
+                total = ((saleQuantity / 3) * salesPrice) + (price * (quantity - saleQuantity))
+            } else {
+                total = (price * quantity)
+            }
+            return + sum + total
+        }, 0)
+        setNet(net)
     }
 
     const handleSubmit = (e) =>{
@@ -72,22 +68,18 @@ const duplicateCounts = {};
         e.preventDefault();
       }
 
-      // display the cart
-    //   for (let [key, value] of Object.entries(cartItemsAndQuantity)) {
-    //     console.log(key + ':' + value);
-    //   }
-    // or
-    // compiledCart.reduce((accumulator, currentValue,) => {
-    //     console.log(currentValue.item, currentValue.price * currentValue.quantity)
-    // }, {})
-
     return (
-        <form onSubmit={handleSubmit}>
-            <p>Please enter all the items purchased seperated by a comma. </p>
-            <input className="checkoutInput" type="text" onChange={handleChange}/>
-
-            <button type="submit" className="myButton"> Checkout </button>
-        </form>
+        <div>
+            <form onSubmit={handleSubmit}>
+                <p>Please enter all the items purchased seperated by a comma. </p>
+                <input className="checkoutInput" type="text" onChange={handleChange}/>
+                <button type="submit" className="myButton"> Checkout </button>
+            </form>
+            <div>
+                <h4>Your Total: ${net}</h4>
+                <h4>Your Savings: ${(gross - net).toFixed(2)}</h4>
+            </div>
+        </div>
     );
 }
 
