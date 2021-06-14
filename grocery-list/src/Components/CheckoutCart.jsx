@@ -24,9 +24,12 @@ const duplicateCounts = {};
         for(let i = 0; i < groceryItems.groceryPrices.length; i++){
             for(let x = 0; x < cartItemsAndQuantity.length; x++){
                 if(groceryItems.groceryPrices[i].name === cartItemsAndQuantity[x][0]){
-                    grossCartAccumulator.push({'item': groceryItems.groceryPrices[i].name,
+                    grossCartAccumulator.push({
+                    'item': groceryItems.groceryPrices[i].name,
                     'quantity': cartItemsAndQuantity[x][1],
-                    'price': groceryItems.groceryPrices[i].price})
+                    'price': groceryItems.groceryPrices[i].price,
+                    'salesPrice': groceryItems.groceryPrices[i].salesPrice
+                })
                 }
             }
         }
@@ -34,8 +37,24 @@ const duplicateCounts = {};
       }
 
     const calculateGrossTotal = () =>{
-        const grossTotal = compiledCart.reduce( ( sum, { price, quantity } ) => sum + (price * quantity) , 0)
-        console.log(grossTotal)
+    //     const grossTotal = compiledCart.reduce( ( sum, { price, quantity } ) => sum + (price * quantity) , 0)
+    //     console.log(grossTotal)
+    //     console.log(compiledCart)
+    //     compiledCart.reduce( ( sum, { price, quantity, item } ) => sum + (
+    //         console.log(item, quantity % 2)
+    //         ) , 0)
+    const gross = compiledCart.reduce((sum, {item, price, quantity, salesPrice = 0}) => {
+        let total = 0;
+        if (quantity >= 2 && item === "milk") {
+            const saleQuantity = 2 * Math.floor(quantity / 2);
+            console.log({sum, item, saleQuantity, remainderQuantity: quantity - saleQuantity});
+            total = ((saleQuantity / 2) * salesPrice) + (price * (quantity - saleQuantity));
+        } else {
+            total = (price * quantity);
+        }
+        return + sum + total;
+    }, 0);
+    console.log('gross', gross)
     }
 
     const handleSubmit = (e) =>{
@@ -46,12 +65,6 @@ const duplicateCounts = {};
         }, {})
         setCartItemsAndQuantity(Object.entries(countedItemsArray))
 
-
-        normalizedCart.filter((item, index)=>normalizedCart.indexOf(item) != index).forEach(function (x) { duplicateCounts[x] = (duplicateCounts[x] || 0) + 1; })
-
-        if (duplicateCounts && Object.keys(duplicateCounts).length === 0 && duplicateCounts.constructor === Object){
-            // duplicateCounts.forEach(function (item) { console.log(item) })
-            }
         e.preventDefault();
       }
 
