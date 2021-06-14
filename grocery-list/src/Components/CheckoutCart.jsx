@@ -49,6 +49,10 @@ const duplicateCounts = {};
             const saleQuantity = 2 * Math.floor(quantity / 2);
             console.log({sum, item, saleQuantity, remainderQuantity: quantity - saleQuantity});
             total = ((saleQuantity / 2) * salesPrice) + (price * (quantity - saleQuantity));
+        } else if (quantity >= 3 && item === "bread") {
+            const saleQuantity = 3 * Math.floor(quantity / 3);
+            console.log({sum, item, saleQuantity, remainderQuantity: quantity - saleQuantity});
+            total = ((saleQuantity / 3) * salesPrice) + (price * (quantity - saleQuantity));
         } else {
             total = (price * quantity);
         }
