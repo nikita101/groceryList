@@ -1,7 +1,7 @@
 {
     "groceryPrices":[
-        {"name":"milk", "price": 3.97},
-        {"name":"bread", "price": 2.17},
+        {"name":"milk", "price": 3.97, "salesPrice": 5.00},
+        {"name":"bread", "price": 2.17, "salesPrice": 6.00},
         {"name": "banana", "price": 0.99},
         {"name": "apple", "price": 0.89}
 ]
